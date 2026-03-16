@@ -13,7 +13,10 @@
 ## X-Wago-ID: nQN5ePNB
 ## X-WoWI-ID: 26180
 
-embeds.xml
+#@non-debug@
+#Libs\LibStub\LibStub.lua
+#Libs\AceLocale-3.0\AceLocale-3.0.lua
+#@end-non-debug@
 Locales\enUS.lua
 Locales\[TextLocale].lua [AllowLoadTextLocale deDE, esES, esMX, frFR, itIT, koKR, ptBR, ruRU, zhCN, zhTW]
 GreatVaultKeyInfo.lua
