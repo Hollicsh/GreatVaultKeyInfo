@@ -4,9 +4,6 @@ externals:
 
 enable-nolib-creation: no
 
-ignore:
-    - README.md
-
 plain-copy:
     - "*.lua"
     - "*.md"
