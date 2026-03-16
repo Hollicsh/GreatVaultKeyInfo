@@ -18,13 +18,6 @@ local RaidItemLevelsBySeason = {
 		[15] = 259, -- Heroic
 		[16] = 272, -- Mythic
 	},
-	-- The War Within Season 3
-	[108] = {
-		[17] = 108, -- LFR
-		[14] = 121, -- Normal
-		[15] = 134, -- Heroic
-		[16] = 147, -- Mythic
-	},
 }
 -- this is from https://wago.tools/db2/MythicPlusSeasonRewardLevels?page=1&sort[WeeklyRewardLevel]=asc&filter[MythicPlusSeasonID]=117
 local DungeonItemLevelsBySeason = {
@@ -42,20 +35,6 @@ local DungeonItemLevelsBySeason = {
 		[9] = 269,
 		[10] = 272,
 	},
-	-- The War Within Season 3
-	[108] = {
-		["HEROIC"] = 118,
-		["MYTHIC"] = 131,
-		[2] = 134,
-		[3] = 134,
-		[4] = 137,
-		[5] = 137,
-		[6] = 141,
-		[7] = 144,
-		[8] = 144,
-		[9] = 144,
-		[10] = 147,
-	},
 }
 local WorldItemLevelsBySeason = {
 	-- Midnight Season 1
@@ -68,17 +47,6 @@ local WorldItemLevelsBySeason = {
 		[6] = 253,
 		[7] = 256,
 		[8] = 259,
-	},
-	-- The War Within Season 3
-	[108] = {
-		[1] = 108,
-		[2] = 111,
-		[3] = 115,
-		[4] = 118,
-		[5] = 121,
-		[6] = 128,
-		[7] = 131,
-		[8] = 134,
 	},
 }
 -- the order of entries in this table matters, must be highest tier to lowest tier
@@ -99,14 +67,6 @@ local ItemTierItemMinimumLevelBySeason = {
 		["champion"] = 246,
 		["hero"] = 259,
 		["myth"] = 272,
-	},
-	-- The War Within Season 3
-	[108] = {
-		["adventurer"] = 102,
-		["veteran"] = 108,
-		["champion"] = 121,
-		["hero"] = 134,
-		["myth"] = 147,
 	},
 }
 -- ranks within each tier
@@ -154,59 +114,6 @@ local ItemTierItemLevelsBySeason = {
 			[289] = 6,
 		},
 	},
-	-- The War Within Season 3
-	[108] = {
-		["adventurer"] = {
-			[102] = 1,
-			[103] = 2,
-			[104] = 3,
-			[105] = 4,
-			[108] = 5,
-			[111] = 6,
-			[115] = 7,
-			[118] = 8,
-		},
-		["veteran"] = {
-			[108] = 1,
-			[111] = 2,
-			[115] = 3,
-			[118] = 4,
-			[121] = 5,
-			[124] = 6,
-			[128] = 7,
-			[131] = 8,
-		},
-		["champion"] = {
-			[121] = 1,
-			[124] = 2,
-			[128] = 3,
-			[131] = 4,
-			[134] = 5,
-			[137] = 6,
-			[141] = 7,
-			[144] = 8,
-		},
-		["hero"] = {
-			[134] = 1,
-			[137] = 2,
-			[141] = 3,
-			[144] = 4,
-			[147] = 5,
-			[150] = 6,
-			[154] = 7,
-			[157] = 8,
-		},
-		["myth"] = {
-			[147] = 1,
-			[150] = 2,
-			[154] = 3,
-			[157] = 4,
-			[160] = 5,
-			[163] = 6,
-			[167] = 7,
-			[170] = 8,
-		},
-	},
 }
 local ItemTierNumRanksBySeason = {
 	-- Midnight Season 1
@@ -217,20 +124,10 @@ local ItemTierNumRanksBySeason = {
 		["hero"] = 6,
 		["myth"] = 6,
 	},
-	-- The War Within Season 3
-	[108] = {
-		["adventurer"] = 8,
-		["veteran"] = 8,
-		["champion"] = 8,
-		["hero"] = 6,
-		["myth"] = 6,
-	},
 }
 local ExampleRaidRewardItemIDBySeason = {
 	-- Midnight Season 1
 	[117] = nil, -- TODO figure out what item Blizzard uses as the S1 example reward
-	-- The War Within Season 3
-	[108] = 237567, -- Logic Gate: Alpha
 }
 -- fallback value
 local WEEKLY_MAX_DUNGEON_THRESHOLD = 8
