@@ -365,31 +365,27 @@ local HandleEarnedDungeonRewardTooltip = function(self, blizzItemLevel)
 end
 
 local AddWorldProgress = function(threshold)
-	local activities = C_WeeklyRewards.GetActivities(Enum.WeeklyRewardChestThresholdType.World)
-	local activity = activities[1]
-	if activity and activity.level and activity.level > 0 then
-		GameTooltip_AddBlankLineToTooltip(GameTooltip)
-		GameTooltip_AddHighlightLine(GameTooltip, string.format(WEEKLY_REWARDS_MYTHIC_TOP_RUNS, threshold))
-		local previousActivityProgress = 0
-		for i = 1, 3 do
-			activity = activities[i]
-			if activity and activity.level and activity.level > 0 then
-				local maxProgress = min(activity.progress, threshold)
-				if previousActivityProgress < maxProgress then
-					local itemLink = C_WeeklyRewards.GetExampleRewardItemHyperlinks(activity.id)
-					local itemLevel = itemLink and C_Item.GetDetailedItemLevelInfo(itemLink) or nil
-					local reward = GetItemTierFromItemLevel(GetRewardLevelFromDelveLevel(activity.level, itemLevel))
-					local tier = GREAT_VAULT_WORLD_TIER:format(activity.level)
-					local rewardText = string.format("(%s) %s", reward, tier)
-					for j = previousActivityProgress + 1, maxProgress do
-						if j == threshold or j == activities[3].progress then
-							GameTooltip_AddColoredLine(GameTooltip, rewardText, GREEN_FONT_COLOR)
-						else
-							GameTooltip_AddHighlightLine(GameTooltip, rewardText)
-						end
-					end
-					previousActivityProgress = activity.progress
-				end
+	local sortedProgress = C_WeeklyRewards.GetSortedProgressForActivity(Enum.WeeklyRewardChestThresholdType.World, true)
+	if not sortedProgress or #sortedProgress == 0 then
+		return
+	end
+	GameTooltip_AddBlankLineToTooltip(GameTooltip)
+	GameTooltip_AddHighlightLine(GameTooltip, string.format(WEEKLY_REWARDS_MYTHIC_TOP_RUNS, threshold))
+	local linesAdded = 0
+	for i = 1, #sortedProgress do
+		local entry = sortedProgress[i]
+		local itemLink = C_WeeklyRewards.GetExampleRewardItemHyperlinks(entry.activityTierID)
+		local itemLevel = itemLink and C_Item.GetDetailedItemLevelInfo(itemLink) or nil
+		local reward = GetItemTierFromItemLevel(GetRewardLevelFromDelveLevel(entry.difficulty, itemLevel))
+		local tier = GREAT_VAULT_WORLD_TIER:format(entry.difficulty)
+		local rewardText = string.format("(%s) %s", reward, tier)
+		for j = 1, entry.numPoints do
+			linesAdded = linesAdded + 1
+			if linesAdded == threshold or (i == #sortedProgress and j == entry.numPoints) then
+				GameTooltip_AddColoredLine(GameTooltip, rewardText, GREEN_FONT_COLOR)
+				return
+			else
+				GameTooltip_AddHighlightLine(GameTooltip, rewardText)
 			end
 		end
 	end
@@ -547,8 +543,14 @@ local SetProgressText = function(self, text, isRetry)
 end
 
 -- Raid
+--WeeklyRewardsFrame.Activities[2].CanShowPreviewItemTooltip = CanShowPreviewItemTooltip
+--WeeklyRewardsFrame.Activities[2].ShowPreviewItemTooltip = ShowPreviewItemTooltip
 WeeklyRewardsFrame.Activities[2].SetProgressText = SetProgressText
+--WeeklyRewardsFrame.Activities[3].CanShowPreviewItemTooltip = CanShowPreviewItemTooltip
+--WeeklyRewardsFrame.Activities[3].ShowPreviewItemTooltip = ShowPreviewItemTooltip
 WeeklyRewardsFrame.Activities[3].SetProgressText = SetProgressText
+--WeeklyRewardsFrame.Activities[4].CanShowPreviewItemTooltip = CanShowPreviewItemTooltip
+--WeeklyRewardsFrame.Activities[4].ShowPreviewItemTooltip = ShowPreviewItemTooltip
 WeeklyRewardsFrame.Activities[4].SetProgressText = SetProgressText
 
 -- Dungeons
