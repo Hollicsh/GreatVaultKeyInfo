@@ -127,7 +127,7 @@ local ItemTierNumRanksBySeason = {
 }
 local ExampleRaidRewardItemIDBySeason = {
 	-- Midnight Season 1
-	[117] = nil, -- TODO figure out what item Blizzard uses as the S1 example reward
+	[117] = 249336, -- Signet of the Starved Beast
 }
 -- fallback value
 local WEEKLY_MAX_DUNGEON_THRESHOLD = 8
