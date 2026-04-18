@@ -404,7 +404,7 @@ local AddWorldProgress = function(threshold)
 		local rewardText = string.format("(%s) %s", reward, tier)
 		for j = 1, entry.numPoints do
 			linesAdded = linesAdded + 1
-			if linesAdded == threshold or (i == #sortedProgress and j == entry.numPoints) then
+			if linesAdded == threshold or (linesAdded < threshold and i == #sortedProgress and j == entry.numPoints) then
 				GameTooltip_AddColoredLine(GameTooltip, rewardText, GREEN_FONT_COLOR)
 				if threshold ~= calcMaxWorldThreshold then
 					return
