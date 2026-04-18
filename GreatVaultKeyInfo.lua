@@ -131,6 +131,7 @@ local ExampleRaidRewardItemIDBySeason = {
 }
 -- fallback value
 local WEEKLY_MAX_DUNGEON_THRESHOLD = 8
+local WEEKLY_MAX_WORLD_THRESHOLD = 8
 
 -- event frame
 local GreatVaultKeyInfoFrame = CreateFrame("Frame")
@@ -213,16 +214,26 @@ local CompareRuns = function(entry1, entry2)
 end
 
 -- calculate the max reward threshold
-local calcMaxRewardThreshold = WEEKLY_MAX_DUNGEON_THRESHOLD
+local calcMaxActivitiesThreshold = WEEKLY_MAX_DUNGEON_THRESHOLD
+local calcMaxWorldThreshold = WEEKLY_MAX_WORLD_THRESHOLD
 function GreatVaultKeyInfoFrame:CHALLENGE_MODE_MAPS_UPDATE()
-	calcMaxRewardThreshold = 0
+	-- Dungeons
+	calcMaxActivitiesThreshold = 0
 	local activities = C_WeeklyRewards.GetActivities(Enum.WeeklyRewardChestThresholdType.Activities)
 	for _, activityInfo in ipairs(activities) do
-		calcMaxRewardThreshold = max(calcMaxRewardThreshold, activityInfo.threshold)
+		calcMaxActivitiesThreshold = max(calcMaxActivitiesThreshold, activityInfo.threshold)
 	end
-	-- fallback to the default if result is empty
-	if calcMaxRewardThreshold == 0 then
-		calcMaxRewardThreshold = WEEKLY_MAX_DUNGEON_THRESHOLD
+	if calcMaxActivitiesThreshold == 0 then -- fallback to the default if result is empty
+		calcMaxActivitiesThreshold = WEEKLY_MAX_DUNGEON_THRESHOLD
+	end
+	-- World
+	calcMaxWorldThreshold = 0
+	local world = C_WeeklyRewards.GetActivities(Enum.WeeklyRewardChestThresholdType.World)
+	for _, activityInfo in ipairs(world) do
+		calcMaxWorldThreshold = max(calcMaxWorldThreshold, activityInfo.threshold)
+	end
+	if calcMaxWorldThreshold == 0 then -- fallback to the default if result is empty
+		calcMaxWorldThreshold = WEEKLY_MAX_DUNGEON_THRESHOLD
 	end
 end
 
@@ -235,7 +246,7 @@ local HandleInProgressDungeonRewardTooltip = function(self)
 	GameTooltip_AddNormalLine(GameTooltip, string.format(L.run_to_unlock, self.info.threshold - numDungeons))
 	if numDungeons > 0 then
 		GameTooltip_AddBlankLineToTooltip(GameTooltip)
-		if self.info.threshold == calcMaxRewardThreshold then
+		if self.info.threshold == calcMaxActivitiesThreshold then
 			GameTooltip_AddHighlightLine(GameTooltip, string.format(numDungeons == 1 and L.run_this_week or L.runs_this_week, numDungeons))
 		else
 			GameTooltip_AddHighlightLine(GameTooltip, string.format(WEEKLY_REWARDS_MYTHIC_TOP_RUNS, self.info.threshold))
@@ -311,7 +322,7 @@ local HandleEarnedDungeonRewardTooltip = function(self, blizzItemLevel)
 	local numDungeons = numHeroic + numMythic + numMythicPlus
 	if numDungeons > 0 then
 		GameTooltip_AddBlankLineToTooltip(GameTooltip)
-		if self.info.threshold == calcMaxRewardThreshold and numDungeons > calcMaxRewardThreshold then
+		if self.info.threshold == calcMaxActivitiesThreshold and numDungeons > calcMaxActivitiesThreshold then
 			GameTooltip_AddHighlightLine(GameTooltip, string.format(L.top_runs_this_week, self.info.threshold, numDungeons))
 		elseif self.info.threshold ~= 1 then
 			GameTooltip_AddHighlightLine(GameTooltip, string.format(WEEKLY_REWARDS_MYTHIC_TOP_RUNS, self.info.threshold))
@@ -319,7 +330,7 @@ local HandleEarnedDungeonRewardTooltip = function(self, blizzItemLevel)
 	end
 	if #runHistory > 0 then
 		table.sort(runHistory, CompareRuns)
-		local maxLines = self.info.threshold == calcMaxRewardThreshold and #runHistory or self.info.threshold
+		local maxLines = self.info.threshold == calcMaxActivitiesThreshold and #runHistory or self.info.threshold
 		for i = 1, maxLines do
 			if runHistory[i] then
 				local runInfo = runHistory[i]
@@ -338,7 +349,7 @@ local HandleEarnedDungeonRewardTooltip = function(self, blizzItemLevel)
 	if numMythic > 0 or numHeroic > 0 then
 		local HEROIC_ITEM_LEVEL, MYTHIC_ITEM_LEVEL = GetCurrentSeasonRewardLevels()
 		if numMythic > 0 then
-			local maxLines = self.info.threshold == calcMaxRewardThreshold and numMythicPlus + numMythic or self.info.threshold
+			local maxLines = self.info.threshold == calcMaxActivitiesThreshold and numMythicPlus + numMythic or self.info.threshold
 			for i = numMythicPlus + 1, maxLines do
 				if i == self.info.threshold then
 					GameTooltip_AddColoredLine(GameTooltip, string.format("(%2$s) %1$s", WEEKLY_REWARDS_MYTHIC:format(WeeklyRewardsUtil.MythicLevel), GetItemTierFromItemLevel(MYTHIC_ITEM_LEVEL)), GREEN_FONT_COLOR)
@@ -350,7 +361,7 @@ local HandleEarnedDungeonRewardTooltip = function(self, blizzItemLevel)
 			end
 		end
 		if numHeroic > 0 then
-			local maxLines = self.info.threshold == calcMaxRewardThreshold and numDungeons or self.info.threshold
+			local maxLines = self.info.threshold == calcMaxActivitiesThreshold and numDungeons or self.info.threshold
 			for i = numMythicPlus + numMythic + 1, maxLines do
 				if i == self.info.threshold then
 					GameTooltip_AddColoredLine(GameTooltip, string.format("(%2$s) %1$s", WEEKLY_REWARDS_HEROIC, GetItemTierFromItemLevel(HEROIC_ITEM_LEVEL)), GREEN_FONT_COLOR)
@@ -383,7 +394,9 @@ local AddWorldProgress = function(threshold)
 			linesAdded = linesAdded + 1
 			if linesAdded == threshold or (i == #sortedProgress and j == entry.numPoints) then
 				GameTooltip_AddColoredLine(GameTooltip, rewardText, GREEN_FONT_COLOR)
-				return
+				if threshold ~= calcMaxWorldThreshold then
+					return
+				end
 			else
 				GameTooltip_AddHighlightLine(GameTooltip, rewardText)
 			end
