@@ -381,7 +381,19 @@ local AddWorldProgress = function(threshold)
 		return
 	end
 	GameTooltip_AddBlankLineToTooltip(GameTooltip)
-	GameTooltip_AddHighlightLine(GameTooltip, string.format(WEEKLY_REWARDS_MYTHIC_TOP_RUNS, threshold))
+	if threshold == calcMaxWorldThreshold then
+		local numWorld = 0
+		for i = 1, #sortedProgress do
+			numWorld = numWorld + sortedProgress[i].numPoints
+		end
+		if numWorld > calcMaxWorldThreshold then
+			GameTooltip_AddHighlightLine(GameTooltip, string.format(L.top_runs_this_week, threshold, numWorld))
+		else
+			GameTooltip_AddHighlightLine(GameTooltip, string.format(WEEKLY_REWARDS_MYTHIC_TOP_RUNS, threshold))
+		end
+	else
+		GameTooltip_AddHighlightLine(GameTooltip, string.format(WEEKLY_REWARDS_MYTHIC_TOP_RUNS, threshold))
+	end
 	local linesAdded = 0
 	for i = 1, #sortedProgress do
 		local entry = sortedProgress[i]
