@@ -409,8 +409,10 @@ local AddWorldProgress = function(threshold)
 				if threshold ~= calcMaxWorldThreshold then
 					return
 				end
-			else
+			elseif linesAdded < threshold then
 				GameTooltip_AddHighlightLine(GameTooltip, rewardText)
+			else
+				GameTooltip_AddColoredLine(GameTooltip, rewardText, GRAY_FONT_COLOR)
 			end
 		end
 	end
